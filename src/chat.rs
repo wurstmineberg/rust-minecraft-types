@@ -202,6 +202,15 @@ impl From<String> for Chat {
     }
 }
 
+impl<'a> From<&'a str> for Chat {
+    fn from(text: &str) -> Chat {
+        Chat {
+            text: text.to_owned(),
+            ..Chat::default()
+        }
+    }
+}
+
 impl fmt::Display for Chat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).map_err(|_| fmt::Error)?)
