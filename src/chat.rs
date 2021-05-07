@@ -1,7 +1,10 @@
 //! This module contains the [`Chat`] type, which represents the [raw JSON text format](https://minecraft.fandom.com/wiki/Raw_JSON_text_format#Java_Edition), also [called Chat](https://wiki.vg/Chat).
 
 use {
-    std::fmt,
+    std::{
+        borrow::Cow,
+        fmt,
+    },
     serde::{
         Deserialize,
         Serialize,
@@ -106,8 +109,8 @@ pub struct Chat {
 
 impl Chat {
     /// Adds a text component to the `extra` list.
-    pub fn add_extra(&mut self, extra: Chat) -> &mut Chat {
-        self.extra.push(extra);
+    pub fn add_extra(&mut self, extra: impl Into<Chat>) -> &mut Chat {
+        self.extra.push(extra.into());
         self
     }
 
@@ -206,6 +209,15 @@ impl<'a> From<&'a str> for Chat {
     fn from(text: &str) -> Chat {
         Chat {
             text: text.to_owned(),
+            ..Chat::default()
+        }
+    }
+}
+
+impl<'a> From<Cow<'a, str>> for Chat {
+    fn from(text: Cow<'a, str>) -> Chat {
+        Chat {
+            text: text.into_owned(),
             ..Chat::default()
         }
     }
